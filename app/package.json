@@ -1,0 +1,15 @@
+{
+  "name": "media-management-system",
+  "version": "1.0.0",
+  "description": "An app which allows user to manage media files easily",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shravan,Sanjiv",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^32.1.2"
+  }
+}
