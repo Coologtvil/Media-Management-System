@@ -14,7 +14,7 @@ CREATE TABLE collection (
 	collection_ID int NOT NULL PRIMARY KEY,
 	name varchar(255) NOT NULL,
 	description varchar(255),
-	create_user_ID FOREIGN KEY REFERENCES user(user_ID),
+	create_user_ID int FOREIGN KEY REFERENCES user(user_ID),--added type here
 	last_updated timestamp
 );
 
@@ -29,16 +29,16 @@ CREATE TABLE media (
 	media_ID int NOT NULL PRIMARY KEY,
 	title varchar(255) NOT NULL,
 	description varchar(255),
-	type -- TODO add type datatype
+	type varchar(255) NOT NULL,-- added type here
 	url VARCHAR(2083) NOT NULL,
 	size_kb int NOT NULL,
-	duration
-	resolution
-	format
-	category_ID /* type */ FOREIGN KEY REFERENCES media_categories(category_ID),
+	duration int,
+	resolution varchar(255),
+	format varchar(255) NOT NULL,
+	category_ID int FOREIGN KEY REFERENCES media_categories(category_ID), /* added types here*/
 	upload_time timestamp NOT NULL,
 	last_updated timestamp NOT NULL,
-	collection int FOREIGN KEY REFERENCES collection(collection_ID)
+	collection_ID int FOREIGN KEY REFERENCES collection(collection_ID)
 );
 
 
@@ -56,8 +56,8 @@ CREATE TABLE media_metadata (
 	meta_id int NOT NULL,
 	media_id int FOREIGN KEY REFERENCES media(media_id),
 	data_type varchar(255),
-	key -- TODO specify the type 
-	value int NOT NULL
+	key varchar(255) NOT NULL,-- added type here
+	value varchar(255) NOT NULL
 )
 
 	
