@@ -91,6 +91,7 @@ out
 .nuxt
 dist-react
 dist-electron
+dist
 
 
 # Gatsby files
