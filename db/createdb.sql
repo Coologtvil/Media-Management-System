@@ -1,5 +1,3 @@
--- TODO : add unspecified types and check if all foreign key REFERENCES are correct 
-
 CREATE TABLE user (
     	user_ID int NOT NULL PRIMARY KEY,
     	Name varchar(255) NOT NULL,
@@ -14,8 +12,9 @@ CREATE TABLE collection (
 	collection_ID int NOT NULL PRIMARY KEY,
 	name varchar(255) NOT NULL,
 	description varchar(255),
-	create_user_ID int FOREIGN KEY REFERENCES user(user_ID),--added type here
-	last_updated timestamp
+	create_user_ID int ,
+	last_updated timestamp,
+	FOREIGN KEY (create_user_ID) REFERENCES user(user_ID)--added type here
 );
 
 CREATE TABLE media_categories (
@@ -35,10 +34,12 @@ CREATE TABLE media (
 	duration int,
 	resolution varchar(255),
 	format varchar(255) NOT NULL,
-	category_ID int FOREIGN KEY REFERENCES media_categories(category_ID), /* added types here*/
+	category_ID int ,
 	upload_time timestamp NOT NULL,
 	last_updated timestamp NOT NULL,
-	collection_ID int FOREIGN KEY REFERENCES collection(collection_ID)
+	collection_ID int ,
+	FOREIGN KEY (category_ID) REFERENCES media_categories(category_ID), /* added types here*/
+	FOREIGN KEY (collection_ID) REFERENCES collection(collection_ID)
 );
 
 
@@ -54,10 +55,11 @@ CREATE TABLE user_preferences (
 
 CREATE TABLE media_metadata (
 	meta_id int NOT NULL,
-	media_id int FOREIGN KEY REFERENCES media(media_id),
+	media_id int ,
 	data_type varchar(255),
 	key varchar(255) NOT NULL,-- added type here
-	value varchar(255) NOT NULL
-)
+	value varchar(255) NOT NULL,
+	FOREIGN KEY (media_id) REFERENCES media(media_id)
+);
 
 	
