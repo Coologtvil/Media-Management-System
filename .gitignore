@@ -147,3 +147,4 @@ pip-selfcheck.json
 
 
 main.db
+__pycache__/
