@@ -1,23 +1,13 @@
 # TODO execute sql script from py
-import sqlite3 as db
-try:
-    con = db.connect('main.db')
-except:
-    print("error connecting to database")
+from SQLDB import SQLiteDB
+from datetime import datetime
+op = SQLiteDB('main.db')
 
-try:
-    db_schema = open("createdb.sql","r")   
-except:
-    print("error opening the schema file")
-    
-print("database created successfully")
-cur = con.cursor()
+def add_user(name,mail,pswd):
+    op.execute_query('INSERT INTO "user" (Name,email,password,created_at) VALUES (?,?,?,?)',(name,mail,pswd,datetime.now()))
+   
+add_user('Shravan','xyz@mail.com','hello@123')
 
-if(cur.executescript(db_schema.read())):
-    con.commit()
-else:
-    print("Error reading/ executing sql file")
-
-con.close()
-
-
+users = op.fetch_query("SELECT * FROM user")
+print(users)
+op.close()

@@ -1,5 +1,5 @@
 CREATE TABLE user (
-    	user_ID int NOT NULL PRIMARY KEY,
+    	user_ID integer PRIMARY KEY autoincrement,
     	Name varchar(255) NOT NULL,
     	email varchar(319) NOT NULL,
     	password varchar(255) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE user (
 );
 
 CREATE TABLE collection (
-	collection_ID int NOT NULL PRIMARY KEY,
+	collection_ID integer NOT NULL PRIMARY KEY autoincrement,
 	name varchar(255) NOT NULL,
 	description varchar(255),
 	create_user_ID int ,
@@ -18,14 +18,14 @@ CREATE TABLE collection (
 );
 
 CREATE TABLE media_categories (
-	category_ID int NOT NULL PRIMARY KEY,
+	category_ID integer NOT NULL PRIMARY KEY autoincrement,
 	name varchar(255) NOT NULL,
 	description varchar(255),
 	def_app varchar(255)
 );
 
 CREATE TABLE media (
-	media_ID int NOT NULL PRIMARY KEY,
+	media_ID integer NOT NULL PRIMARY KEY autoincrement,
 	title varchar(255) NOT NULL,
 	description varchar(255),
 	type varchar(255) NOT NULL,-- added type here
@@ -44,7 +44,7 @@ CREATE TABLE media (
 
 
 CREATE TABLE user_preferences (
-	pref_ID int NOT NULL PRIMARY KEY,
+	pref_ID integer NOT NULL PRIMARY KEY autoincrement,
 	user_ID int NOT NULL,
 	category_ID int NOT NULL,
 	pref_app varchar(255),
@@ -54,7 +54,7 @@ CREATE TABLE user_preferences (
 
 
 CREATE TABLE media_metadata (
-	meta_id int NOT NULL,
+	meta_id integer NOT NULL,
 	media_id int ,
 	data_type varchar(255),
 	key varchar(255) NOT NULL,-- added type here
