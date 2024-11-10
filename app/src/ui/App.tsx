@@ -38,6 +38,7 @@ export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Simulating data fetch with a delay
     const fetchData = async () => {
       await new Promise(resolve => setTimeout(resolve, 1500))
       const mockData: MediaItem[] = [
@@ -55,6 +56,7 @@ export default function Component() {
   }, [])
 
   const handleSearch = () => {
+    // Implement search functionality here
     console.log('Searching for:', searchTerm)
   }
 
@@ -63,6 +65,7 @@ export default function Component() {
   }
 
   const handleOpenExternal = (item: MediaItem) => {
+    // Implement external opening functionality here
     console.log('Opening externally:', item.path)
   }
 
@@ -95,8 +98,8 @@ export default function Component() {
           Search
         </Button>
       </div>
-      <div className="flex flex-col md:flex-row gap-6">
-        <Card className="flex-grow border md:w-2/3">
+      <div className="flex-grow flex flex-col md:flex-row gap-6">
+        <Card className="flex-grow md:w-2/3">
           <CardHeader>
             <CardTitle>Media Library</CardTitle>
             <CardDescription>Browse and manage your media files</CardDescription>
@@ -127,11 +130,11 @@ export default function Component() {
                         <TableCell>
                           <Button variant="outline" size="sm" onClick={() => handlePreview(item)} className="mr-2">
                             <Play className="w-4 h-4 mr-1" />
-                            <span className="sr-only"></span>
+                            <span className="sr-only">Preview</span>
                           </Button>
                           <Button variant="outline" size="sm" onClick={() => handleOpenExternal(item)}>
                             <ExternalLink className="w-4 h-4 mr-1" />
-                            <span className="sr-only"></span>
+                            <span className="sr-only">Open</span>
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -142,7 +145,7 @@ export default function Component() {
             </ScrollArea>
           </CardContent>
         </Card>
-        <Card className="flex-grow border md:w-1/3">
+        <Card className="flex-grow md:w-1/3">
           <CardHeader>
             <CardTitle>Preview</CardTitle>
             <CardDescription>Selected media preview</CardDescription>
@@ -186,4 +189,3 @@ export default function Component() {
     </div>
   )
 }
-
