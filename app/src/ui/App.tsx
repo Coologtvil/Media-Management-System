@@ -5,13 +5,14 @@ import { MediaItem } from './MediaItem'
 import { SearchBar } from './SearchBar'
 import { MediaList } from './MediaList'
 import { MediaPreview } from './MediaPreview'
-
+import {Moon, Sun} from 'lucide-react'
+import { Button } from './button'
 export default function App() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-
+  const [isDarkMode, setIsDarkMode] = useState(false)
 // fetch from DB
 /*  useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +48,17 @@ useEffect(() => {
       setIsLoading(false)
     }
     fetchData()
-  }, []) 
+  }, [])
+
+   useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDarkMode])
+
+
   const handleSearch = (term: string) => {
     setSearchTerm(term)
     // Filter media items based on the search term
@@ -60,11 +71,19 @@ useEffect(() => {
   const handlePreview = (item: MediaItem) => {
     setSelectedItem(item)
   }
-
+  
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode)
+  }
   return (
     <div className="container mx-auto p-4 min-h-screen flex flex-col">
-      <h1 className="text-3xl font-bold mb-8 text-center">Media Manager</h1>
-      <SearchBar onSearch={handleSearch} />
+     <header className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Media Manager</h1>
+          <Button variant="outline" size="icon" onClick={toggleDarkMode} aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}>
+            {isDarkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+          </Button>
+        </header>
+     <SearchBar onSearch={handleSearch} />
       <div className="flex-grow flex flex-col md:flex-row gap-6">
         <MediaList
           mediaItems={mediaItems}
