@@ -1,6 +1,6 @@
 export interface MediaItem {
   id: number
   name: string
-  type: 'photo' | 'video' | 'audio'
+  type: 'image' | 'video' | 'audio'
   path: string
 }

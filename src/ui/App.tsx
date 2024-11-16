@@ -7,6 +7,8 @@ import { MediaList } from './MediaList'
 import { MediaPreview } from './MediaPreview'
 import {Moon, Sun} from 'lucide-react'
 import { Button } from './button'
+const { ipcRenderer } = window.require("electron");
+
 export default function App() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
@@ -33,22 +35,19 @@ export default function App() {
 
 //MOck Data
 useEffect(() => {
-    // Simulating data fetch with a delay
-    const fetchData = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      const mockData: MediaItem[] = [
-        { id: 1, name: 'Beach Sunset', type: 'photo', path: '/placeholder.svg?height=400&width=600' },
-        { id: 2, name: 'Mountain Timelapse', type: 'video', path: 'https://example.com/mountain-timelapse.mp4' },
-        { id: 3, name: 'Relaxing Rain Sounds', type: 'audio', path: 'https://example.com/relaxing-rain.mp3' },
-        { id: 4, name: 'City Nightscape', type: 'photo', path: '/placeholder.svg?height=400&width=600' },
-        { id: 5, name: 'Ocean Waves', type: 'video', path: 'https://example.com/ocean-waves.mp4' },
-        { id: 6, name: 'Forest Ambience', type: 'audio', path: 'https://example.com/forest-ambience.mp3' },
-      ]
-      setMediaItems(mockData)
-      setIsLoading(false)
+  const fetchData = async () => {
+    try {
+      const data = await ipcRenderer.invoke("fetch-media");
+      setMediaItems(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching media items:", error);
+      setIsLoading(false);
     }
-    fetchData()
-  }, [])
+  };
+
+  fetchData();
+}, []);
 
    useEffect(() => {
     if (isDarkMode) {

@@ -22,7 +22,7 @@ interface MediaListProps {
 export function MediaList({ mediaItems, isLoading, onPreview }: MediaListProps) {
   const getIconForType = (type: string) => {
     switch (type) {
-      case 'photo':
+      case 'image':
         return <ImageIcon className="w-5 h-5" />
       case 'video':
         return <Film className="w-5 h-5" />

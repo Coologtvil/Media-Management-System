@@ -26,7 +26,7 @@ export function MediaPreview({ selectedItem }: MediaPreviewProps) {
               className="w-full h-full flex flex-col items-center justify-center"
             >
               <h2 className="text-xl font-semibold mb-4">{selectedItem.name}</h2>
-              {selectedItem.type === 'photo' && (
+              {selectedItem.type === 'image' && (
                 <img src={selectedItem.path} alt={selectedItem.name} className="max-w-full max-h-[calc(100%-2rem)] object-contain rounded-lg shadow-md" />
               )}
               {selectedItem.type === 'video' && (

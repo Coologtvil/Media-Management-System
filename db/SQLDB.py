@@ -52,6 +52,15 @@ class SQLiteDB:
         else:
             self.cursor.execute(query)
         return self.cursor.fetchall()
+    
+    def fetch_media_items(self) -> List[Tuple[int, str, str, str]]:
+        """
+        Fetch media items from the database.
+        :return: List of tuples (id, name, media_type, path_to_media).
+        """
+        query = "SELECT media_id, title, type, url FROM media"
+        return self.fetch_query(query)
+
 
     def close(self):
         """Close the database connection."""
