@@ -1,12 +1,12 @@
 # TODO execute sql script from py
 import sqlite3 as db
 try:
-    con = db.connect('main.db')
+    con = db.connect('./db/main.db')
 except:
     print("error connecting to database")
 
 try:
-    db_schema = open("createdb.sql","r")   
+    db_schema = open("./db/createdb.sql","r")   
 except:
     print("error opening the schema file")
     

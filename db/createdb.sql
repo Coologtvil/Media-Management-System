@@ -36,7 +36,7 @@ CREATE TABLE media (
 	format varchar(255) NOT NULL,
 	category_ID int ,
 	upload_time timestamp NOT NULL,
-	last_updated timestamp NOT NULL,
+	last_updated timestamp,
 	collection_ID int ,
 	FOREIGN KEY (category_ID) REFERENCES media_categories(category_ID), /* added types here*/
 	FOREIGN KEY (collection_ID) REFERENCES collection(collection_ID)
@@ -44,7 +44,7 @@ CREATE TABLE media (
 
 
 CREATE TABLE user_preferences (
-	pref_ID integer NOT NULL PRIMARY KEY autoincrement,
+	user_preferences_ID integer NOT NULL PRIMARY KEY autoincrement,
 	user_ID int NOT NULL,
 	category_ID int NOT NULL,
 	pref_app varchar(255),
@@ -62,4 +62,12 @@ CREATE TABLE media_metadata (
 	FOREIGN KEY (media_id) REFERENCES media(media_id)
 );
 
-	
+CREATE TRIGGER update_last_modified
+AFTER UPDATE ON media
+FOR EACH ROW
+BEGIN
+    -- Update the last_updated field to the current timestamp
+    UPDATE media
+    SET last_updated = CURRENT_TIMESTAMP
+    WHERE media_id = OLD.media_id;
+END;	
