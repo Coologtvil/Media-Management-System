@@ -49,6 +49,49 @@ ipcMain.handle("fetch-media", async () => {
   });
 });
 
+  ipcMain.handle('upload-media', async (event, filePaths) => {
+    const pythonProcess = spawn('python', ['path/to/your/python_script.py', 'upload', ...filePaths])
+    
+    pythonProcess.stdout.on('data', (data) => {
+      console.log(`Python stdout: ${data}`)
+    })
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`Python stderr: ${data}`)
+    })
+
+    return new Promise((resolve, reject) => {
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve('Upload completed successfully')
+        } else {
+          reject(`Python process exited with code ${code}`)
+        }
+      })
+    })
+  })
+
+  ipcMain.handle('upload-media-folder', async (event, folderPath) => {
+    const pythonProcess = spawn('python', ['path/to/your/python_script.py', 'upload-folder', folderPath])
+    
+    pythonProcess.stdout.on('data', (data) => {
+      console.log(`Python stdout: ${data}`)
+    })
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`Python stderr: ${data}`)
+    })
+
+    return new Promise((resolve, reject) => {
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve('Folder upload completed successfully')
+        } else {
+          reject(`Python process exited with code ${code}`)
+        }
+      })
+    })
+  })
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

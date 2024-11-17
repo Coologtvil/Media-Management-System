@@ -5,6 +5,7 @@ import { MediaItem } from './MediaItem'
 import { SearchBar } from './SearchBar'
 import { MediaList } from './MediaList'
 import { MediaPreview } from './MediaPreview'
+import { UploadMedia } from './UploadMedia'
 import {Moon, Sun} from 'lucide-react'
 import { Button } from './button'
 const { ipcRenderer } = window.require("electron");
@@ -74,6 +75,19 @@ useEffect(() => {
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode)
   }
+  const fetchMediaItems = async () => {
+    try {
+      const data = await ipcRenderer.invoke("fetch-media");
+      setMediaItems(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching media items:", error);
+      setIsLoading(false);
+    }
+  };
+  const handleUploadComplete = () => {
+    fetchMediaItems();
+  }
   return (
     <div className="container mx-auto p-4 min-h-screen flex flex-col">
      <header className="flex justify-between items-center mb-8">
@@ -83,6 +97,9 @@ useEffect(() => {
           </Button>
         </header>
      <SearchBar onSearch={handleSearch} />
+     <div>
+          <UploadMedia onUploadComplete={handleUploadComplete} />
+        </div>
       <div className="flex-grow flex flex-col md:flex-row gap-6">
         <MediaList
           mediaItems={mediaItems}
