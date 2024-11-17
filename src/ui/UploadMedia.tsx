@@ -1,7 +1,8 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Upload, Folder } from 'lucide-react'
 import { Button } from './button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
+import { Alert, AlertDescription, AlertTitle } from './alert'
 
 const { ipcRenderer } = window.require("electron");
 
@@ -12,6 +13,7 @@ interface UploadMediaProps {
 export function UploadMedia({ onUploadComplete }: UploadMediaProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -77,6 +79,12 @@ export function UploadMedia({ onUploadComplete }: UploadMediaProps) {
           <Folder className="mr-2 h-4 w-4" />
           Upload Folder
         </Button>
+	{uploadSuccess && (
+          <Alert className="mt-4">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>Media added successfully!</AlertDescription>
+          </Alert>
+        )}
       </CardContent>
     </Card>
   )
