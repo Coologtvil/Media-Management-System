@@ -146,5 +146,6 @@ pyvenv.cfg
 pip-selfcheck.json
 
 
-main.db
+db/main.db
 __pycache__/
+main.db

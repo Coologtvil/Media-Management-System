@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
 import { spawn } from "child_process"; // For Python integration
 import { isDev } from "./util.js";
@@ -50,7 +50,9 @@ ipcMain.handle("fetch-media", async () => {
 });
 
   ipcMain.handle('upload-media', async (event, filePaths) => {
-    const pythonProcess = spawn('python', ['path/to/your/python_script.py', 'upload', ...filePaths])
+    
+    console.log("File paths before IPC:", filePaths)
+    const pythonProcess = spawn('python', ['./db/main.py', 'upload', ...filePaths])
     
     pythonProcess.stdout.on('data', (data) => {
       console.log(`Python stdout: ${data}`)
@@ -72,7 +74,7 @@ ipcMain.handle("fetch-media", async () => {
   })
 
   ipcMain.handle('upload-media-folder', async (event, folderPath) => {
-    const pythonProcess = spawn('python', ['path/to/your/python_script.py', 'upload-folder', folderPath])
+    const pythonProcess = spawn('python', ['./db/main.py', 'upload-folder', folderPath])
     
     pythonProcess.stdout.on('data', (data) => {
       console.log(`Python stdout: ${data}`)
@@ -92,6 +94,25 @@ ipcMain.handle("fetch-media", async () => {
       })
     })
   })
+// File selection handler
+ipcMain.handle("dialog:openFiles", async () => {
+  const result = await dialog.showOpenDialog(mainWindow!, {
+    properties: ["openFile", "multiSelections"],
+    filters: [
+      { name: "Media Files", extensions: ["jpg", "png", "mp4", "mp3"] },
+    ],
+  });
+  return result.filePaths; // Return the selected file paths to the renderer process
+});
+
+// Folder selection handler
+ipcMain.handle("dialog:openFolder", async () => {
+  const result = await dialog.showOpenDialog(mainWindow!, {
+    properties: ["openDirectory"],
+  });
+  return result.filePaths[0]; // Return the selected folder path
+});
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -106,6 +127,7 @@ app.on("activate", () => {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
+	preload: "./preload.js"
       },
     });
 
