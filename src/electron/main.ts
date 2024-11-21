@@ -45,6 +45,35 @@ const extensionMap = {
   audio: ['mp3', 'wav', 'flac', 'aac'],
 };
 
+ipcMain.handle("delete-media-item", async (event, mediaId) => {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn("python", [
+      "./db/main.py",
+      "delete_media_item",
+      mediaId.toString()
+    ]);
+
+    let result = "";
+    pythonProcess.stdout.on("data", (data) => {
+      result += data.toString();
+    });
+
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`Python error: ${data}`);
+      reject(data.toString());
+    });
+
+    pythonProcess.on("close", () => {
+      try {
+        const parsedResult = JSON.parse(result);
+        resolve(parsedResult);
+      } catch (error) {
+        reject("Failed to parse Python output");
+      }
+    });
+  });
+});
+
 ipcMain.handle('open-media', async (_, mediaUri: string) => {
     const mediaPath = normalizeFilePath(mediaUri);
 
@@ -157,6 +186,7 @@ ipcMain.handle("add-files-to-collection", async (event, collectionId, fileIds) =
   })
 
   ipcMain.handle('upload-media-folder', async (event, folderPath) => {
+    console.log(folderPath)
     const pythonProcess = spawn('python', ['./db/main.py', 'upload-folder', folderPath])
     
     pythonProcess.stdout.on('data', (data) => {

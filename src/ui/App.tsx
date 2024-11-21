@@ -8,8 +8,11 @@ import { MediaPreview } from './MediaPreview'
 import { UploadMedia } from './UploadMedia'
 import Collections from './Collections'
 import { Moon, Sun, Upload, Home, FolderOpen } from 'lucide-react'
-import { Button } from './button'
+import { Button } from '../components/ui/button'
 import { Modal } from './Modal'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
+import { useToast } from "../hooks/use-toast"
+
 const { ipcRenderer } = window.require("electron");
 
 export default function App() {
@@ -20,6 +23,7 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('home')
+  const { toast } = useToast()
  
   useEffect(() => {
     fetchMediaItems();
@@ -65,6 +69,34 @@ export default function App() {
     setIsUploadModalOpen(false);
   }
 
+  const handleDeleteMediaItem = async (mediaId: number) => {
+    setIsLoading(true)
+    try {
+      const result = await ipcRenderer.invoke("delete-media-item", mediaId);
+      if (result.success) {
+        setMediaItems(prev => prev.filter(item => item.id !== mediaId));
+        if (selectedItem && selectedItem.id === mediaId) {
+          setSelectedItem(null);
+        }
+        toast({
+          title: "Success",
+          description: "Media item deleted successfully",
+        })
+      } else {
+        throw new Error("Failed to delete media item");
+      }
+    } catch (error) {
+      console.error("Error deleting media item:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete media item",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
@@ -105,13 +137,19 @@ export default function App() {
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Media
               </Button>
-              <div className="flex flex-col md:flex-row gap-6">
-                <MediaList
-                  mediaItems={mediaItems}
-                  isLoading={isLoading}
-                  onPreview={handlePreview}
-                />
-                <MediaPreview selectedItem={selectedItem} />
+              <div className="flex flex-col lg:flex-row gap-6">
+                <div className="lg:w-1/2">
+
+                  <MediaList
+                    mediaItems={mediaItems}
+                    isLoading={isLoading}
+                    onPreview={handlePreview}
+                    onDelete={handleDeleteMediaItem}
+                  />
+                </div>
+                <div className="lg:w-1/2">
+                  <MediaPreview selectedItem={selectedItem} />
+                </div>
               </div>
             </>
           )}

@@ -13,6 +13,12 @@ def add_user(name, mail, pswd):
         (name, mail, pswd, datetime.now())
     )
 
+def delete_media_item(media_id):
+    op.execute_query("DELETE FROM media WHERE media_ID = ?", (media_id,))
+    return True
+
+
+
 def determine_media_type(file_extension):
     """
     Determines the type of a media file based on its extension.
@@ -142,4 +148,8 @@ if __name__ == "__main__":
         collection_id = int(sys.argv[2])
         file_ids = json.loads(sys.argv[3])
         success = add_files_to_collection(collection_id, file_ids)
+        print(json.dumps({"success": success}))
+    elif command == "delete_media_item":
+        media_id = int(sys.argv[2])
+        success = delete_media_item(media_id)
         print(json.dumps({"success": success}))

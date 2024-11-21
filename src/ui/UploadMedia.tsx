@@ -53,21 +53,23 @@ export function UploadMedia({ onUploadComplete }: UploadMediaProps) {
   };
 
 
-  const handleFolderUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files && files.length > 0) {
-      try {
-        const folderPath = files[0].path
-        console.log('Folder path to be uploaded:', folderPath)
-        await ipcRenderer.invoke('upload-media-folder', folderPath)
-        setUploadSuccess(true)
-        onUploadComplete()
-      } catch (error) {
-        console.error('Error uploading folder:', error)
-        setUploadSuccess(false)
-      }
+const handleFolderSelection = async () => {
+    const folderPath = await ipcRenderer.invoke("dialog:openFolder"); // Call the exposed API
+    if (!folderPath || folderPath.length === 0) {
+      console.log("No files selected");
+      return;
     }
-  }
+    console.log("Selected file paths:", folderPath); // Log full paths
+    await handleFolderUpload(folderPath);
+  };
+  const handleFolderUpload = async (folderPath: string[]) => {
+    try {
+	const result = await ipcRenderer.invoke("upload-media-folder", folderPath);
+      console.log(result); // Handle success
+    } catch (error) {
+      console.error(error); // Handle errors
+    }
+  };
     return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -85,7 +87,7 @@ export function UploadMedia({ onUploadComplete }: UploadMediaProps) {
         <input
           type="file"
           ref={folderInputRef}
-          onChange={handleFolderUpload}
+          onChange={handleFolderSelection}
           // @ts-ignore
           directory=""
           webkitdirectory=""

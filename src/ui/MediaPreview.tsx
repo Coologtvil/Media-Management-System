@@ -9,7 +9,7 @@ interface MediaPreviewProps {
 
 export function MediaPreview({ selectedItem }: MediaPreviewProps) {
   return (
-    <Card className="flex-grow md:w-1/3">
+    <Card className="flex-grow md:w-1/2 lg:w-2/3">
       <CardHeader>
         <CardTitle>Preview</CardTitle>
         <CardDescription>Selected media preview</CardDescription>
@@ -41,7 +41,7 @@ export function MediaPreview({ selectedItem }: MediaPreviewProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center text-gray-500"
+              className="text-center text-muted-foreground"
             >
               Select an item to preview
             </motion.div>

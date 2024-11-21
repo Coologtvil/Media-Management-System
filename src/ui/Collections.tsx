@@ -6,10 +6,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "./button"
 import { Input } from "./input"
 import { Label } from "../components/ui/label"
-import { Folder, ChevronRight, Loader2, Plus, FileUp } from 'lucide-react'
+import { Folder, ChevronRight, Loader2, Plus, FileUp, Trash2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
 import { useToast } from "../hooks/use-toast"
 import { Checkbox } from "../components/ui/checkbox"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
 
 const { ipcRenderer } = window.require("electron");
 
@@ -134,6 +135,31 @@ export default function Collections() {
         ? prev.filter(id => id !== fileId)
         : [...prev, fileId]
     )
+  }
+
+  const handleDeleteMediaItem = async (mediaId: number) => {
+    setIsLoading(true)
+    try {
+      const result = await ipcRenderer.invoke("delete-media-item", mediaId);
+      if (result.success) {
+        setMediaItems(prev => prev.filter(item => item.id !== mediaId));
+        toast({
+          title: "Success",
+          description: "Media item deleted successfully",
+        })
+      } else {
+        throw new Error("Failed to delete media item");
+      }
+    } catch (error) {
+      console.error("Error deleting media item:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete media item",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -312,6 +338,7 @@ export default function Collections() {
                     <TableHead>Name</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Format</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -320,6 +347,31 @@ export default function Collections() {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.type}</TableCell>
                       <TableCell>{item.format}</TableCell>
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the media item
+                                from your database.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteMediaItem(item.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

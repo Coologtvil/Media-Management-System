@@ -1,99 +1,71 @@
 import React from 'react'
 import { MediaItem } from './MediaItem'
-import { Play, Image as ImageIcon, Music, Film, ExternalLink, Loader2 } from 'lucide-react'
+import { Card, CardContent } from "./card"
 import { Button } from "./button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./table"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card"
-import { ScrollArea } from "./scroll-area"
-
-
-const { ipcRenderer } = window.require("electron")
+import { Loader2, Trash2 } from 'lucide-react'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
 
 interface MediaListProps {
   mediaItems: MediaItem[]
   isLoading: boolean
   onPreview: (item: MediaItem) => void
+  onDelete: (id: number) => void
 }
 
-export function MediaList({ mediaItems, isLoading, onPreview }: MediaListProps) {
-  const getIconForType = (type: string) => {
-    switch (type) {
-      case 'image':
-        return <ImageIcon className="w-5 h-5" />
-      case 'video':
-        return <Film className="w-5 h-5" />
-      case 'audio':
-        return <Music className="w-5 h-5" />
-      default:
-        return null
-    }
+export function MediaList({ mediaItems, isLoading, onPreview, onDelete }: MediaListProps) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    )
   }
-const openMediaInApp = async (mediaItem: MediaItem) => {
-  try {
-    const response = await ipcRenderer.invoke('open-media' , mediaItem.path);
-    if (response.includes('Unsupported media type')) {
-      alert('This media type is not supported!');
-    } else {
-      console.log(response);
-    }
-  } catch (error) {
-    console.error('Error opening media:', error);
-  }
-};
 
   return (
-    <Card className="flex-grow md:w-2/3">
-      <CardHeader>
-        <CardTitle>Media Library</CardTitle>
-        <CardDescription>Browse and manage your media files</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[calc(100vh-300px)]">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">Type</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="w-36">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="h-24 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                    <span className="sr-only">Loading media items...</span>
-                  </TableCell>
-                </TableRow>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {mediaItems.map((item) => (
+        <Card key={item.id} className="overflow-hidden">
+          <CardContent className="p-4">
+            <div className="aspect-square mb-2 bg-muted flex items-center justify-center">
+              {item.type === 'image' ? (
+                <img src={item.path} alt={item.name} className="object-cover w-full h-full" />
               ) : (
-                mediaItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{getIconForType(item.type)}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" onClick={() => onPreview(item)} className="mr-2">
-                        <Play className="w-4 h-4 mr-1" />
-                        <span className="sr-only">Preview</span>
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => openMediaInApp(item)}>
-                        <ExternalLink className="w-4 h-4 mr-1" />
-                        <span className="sr-only">Open</span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                <div className="text-4xl">{item.type.charAt(0).toUpperCase()}</div>
               )}
-            </TableBody>
-          </Table>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+            </div>
+            <h3 className="font-semibold mb-1 truncate">{item.name}</h3>
+            <p className="text-sm text-muted-foreground mb-2">{item.format}</p>
+            <div className="flex justify-between">
+              <Button variant="outline" size="sm" onClick={() => onPreview(item)}>
+                View
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the media item
+                      from your database.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onDelete(item.id)}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   )
 }
