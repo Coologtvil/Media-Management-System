@@ -39,6 +39,16 @@ class SQLiteDB:
             self.cursor.execute(query)
         self.connection.commit()
 
+    def add_collection(self,name, description):
+        self.execute_query("""
+            INSERT INTO collection (name, description, last_updated)
+            VALUES (?, ?, DATETIME('now'))
+        """, (name, description))
+        new_id = self.cursor.lastrowid
+        return new_id
+
+
+
     def fetch_query(self, query: str, params: Optional[Tuple[Any, ...]] = None) -> List[Tuple[Any, ...]]:
         """
         Execute a SELECT query and return all fetched results.

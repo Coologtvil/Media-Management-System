@@ -13,6 +13,9 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card"
 import { ScrollArea } from "./scroll-area"
 
+
+const { ipcRenderer } = window.require("electron")
+
 interface MediaListProps {
   mediaItems: MediaItem[]
   isLoading: boolean
@@ -32,6 +35,18 @@ export function MediaList({ mediaItems, isLoading, onPreview }: MediaListProps) 
         return null
     }
   }
+const openMediaInApp = async (mediaItem: MediaItem) => {
+  try {
+    const response = await ipcRenderer.invoke('open-media' , mediaItem.path);
+    if (response.includes('Unsupported media type')) {
+      alert('This media type is not supported!');
+    } else {
+      console.log(response);
+    }
+  } catch (error) {
+    console.error('Error opening media:', error);
+  }
+};
 
   return (
     <Card className="flex-grow md:w-2/3">
@@ -67,7 +82,7 @@ export function MediaList({ mediaItems, isLoading, onPreview }: MediaListProps) 
                         <Play className="w-4 h-4 mr-1" />
                         <span className="sr-only">Preview</span>
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => console.log('Open externally:', item.path)}>
+                      <Button variant="outline" size="sm" onClick={() => openMediaInApp(item)}>
                         <ExternalLink className="w-4 h-4 mr-1" />
                         <span className="sr-only">Open</span>
                       </Button>
